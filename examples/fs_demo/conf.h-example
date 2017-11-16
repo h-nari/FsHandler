@@ -1,0 +1,9 @@
+#define USE_OTA	      0
+
+#define WIFI_SSID 	"your_wifi_ssid"
+#define	WIFI_PASSWORD	"your_wifi_password"
+
+#if USE_OTA
+#define OTA_PASSWORD 	"your_ota_password"
+#define OTA_PORT	8266
+#endif
