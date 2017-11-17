@@ -29,7 +29,10 @@ bool SdHandler::handle(ESP8266WebServer& server, HTTPMethod requestMethod,
   path += spath;
 
   if(requestMethod == HTTP_DELETE){
-    if(!SD.remove(path)){
+    if(SD.remove((char *)path.c_str())){
+      server.send(200, "text/plain", "delete succeeded");
+      return true;
+    } else {
       server.send(404,"text/plain", "delete failed");
       return true;
     }
@@ -81,14 +84,14 @@ void SdHandler::upload(ESP8266WebServer &server, String uri,
 {
   static File f;
   static unsigned long tStart,tUpdated;
-  unsigned long now = millis();
+  unsigned long now = micros();
   
   if(upload.status == UPLOAD_FILE_START){
     String path = upload.filename;
     Serial.printf("upload: start path:%s\n",path.c_str());
     if(upload.filename == "")
       return;
-    f = SD.open(path, FILE_WRITE);
+    f = SD.open(path, FILE_WRITE | O_TRUNC);
     if(!f) Serial.printf("open %s failed.\n", path.c_str());
     tStart = tUpdated = now;
   } else if(upload.status == UPLOAD_FILE_WRITE){
@@ -96,13 +99,13 @@ void SdHandler::upload(ESP8266WebServer &server, String uri,
     if(now - tUpdated > 1000){
       tUpdated = now;
       uint32_t t = upload.totalSize;
-      Serial.printf("upload: write %dKbyte %lusec %luKbyte/sec\n",t/1000
-		    ,(now - tStart)/1000, t / (now - tStart));
+      Serial.printf("upload: write %dbyte %lusec %luKyte/sec\n",t
+		    ,(now - tStart)/1000, 1000000 * t / (now - tStart));
     }
   } else if(upload.status == UPLOAD_FILE_END){
     if(f) f.close();
     uint32_t t = upload.totalSize;
-    Serial.printf("Upload: END, Size: %ubyte %lusec, %luKbyte/sec\n",
-		  t, (now - tStart)/1000, t/(now - tStart));
+    Serial.printf("Upload: END, Size: %ubyte %lumsec, %lubyte/sec\n",
+		  t, (now - tStart)/1000, 1000000 * t/(now - tStart));
   }
 }

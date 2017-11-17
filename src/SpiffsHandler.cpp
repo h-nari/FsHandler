@@ -21,7 +21,11 @@ bool SpiffsHandler::handle(ESP8266WebServer& server, HTTPMethod method,
   String path = requestUri.substring(m_baseUriLength+1);
 
   if(method == HTTP_DELETE){
-    if(!SPIFFS.remove(path)){
+    Serial.printf("%s:%d delete:%s\n",__FUNCTION__,__LINE__,path.c_str());
+    if(SPIFFS.remove(path)){
+      server.send(200, "text/plain", "delete succeeded");
+      return true;
+    } else {
       server.send(404, "text/plain", "delete failed");
       return true;
     }

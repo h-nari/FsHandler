@@ -39,6 +39,7 @@ bool FsHandler::canUpload(String uri)
 
 void FsHandler::addHtmlHeaderStr(String &s,const char *title)
 {
+  s += F("<!DOCTYPE html>\r\n");
   s += F("<html><head>");
   s += F(" <meta charset='utf-8'/>\r\n");
   s += F(" <title>");
@@ -84,7 +85,7 @@ void FsHandler::addHtmlHeaderStr(String &s,const char *title)
     s += F("          type: 'DELETE',\n");
     s += F("          dataType: 'html',\n");
     s += F("        }).done(function(data){\n");
-    s += F("          document.write(data);\n");
+    s += F("             location.reload();\n");
     s += F("        }).fail(function(jqXHR, status){\n");
     s += F("          alert('ファイルの削除に失敗しました。');\n");
     s += F("        });\n");
@@ -166,12 +167,12 @@ const char *FsHandler::getContentType(const String &path)
 {
   const char *ct;
   if(path.endsWith(F(".HTM")) || path.endsWith(F(".htm")))
-    ct = "text/html";
+    ct = "text/html;charset=UTF-8";
   else if(path.endsWith(F(".JPG")) || path.endsWith(F(".jpg")))
     ct = "image/jpeg";
   else if(path.endsWith(F(".BMP"))|| path.endsWith(F(".bmp")))
     ct = "image/bmp";
   else
-    ct = "text/plain";
+    ct = "text/plain;charset=UTF-8";
   return ct;
 }
