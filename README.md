@@ -12,7 +12,8 @@ arduino library to access spiffs/sd via ESP8266WebServer
 
 ### 画面サンプル
 
-<img src=" https://github.com/h-nari/FsHandler/blob/master/img/sc171117a4.png?raw=true" width="400">
+<div style="text-align: center;">
+<img src=" https://github.com/h-nari/FsHandler/blob/master/img/sc171117a4.png?raw=true" width="400" title="サンプル画面"></div>
 
 ## 使い方
 
