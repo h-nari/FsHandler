@@ -87,10 +87,16 @@ void SdHandler::upload(ESP8266WebServer &server, String uri,
   unsigned long now = micros();
   
   if(upload.status == UPLOAD_FILE_START){
-    String path = upload.filename;
-    Serial.printf("upload: start path:%s\n",path.c_str());
     if(upload.filename == "")
       return;
+    String path = m_path;
+    path += uri.substring(m_baseUriLength);
+    path += upload.filename;
+    
+    Serial.printf("upload: start uri:%s m_uri:%s uriLen:%u m_path:%s path:%s\n",
+		  uri.c_str(),m_uri.c_str(), m_baseUriLength,
+		  m_path.c_str(), path.c_str());
+    
     f = SD.open(path, FILE_WRITE | O_TRUNC);
     if(!f) Serial.printf("open %s failed.\n", path.c_str());
     tStart = tUpdated = now;
