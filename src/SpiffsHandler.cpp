@@ -13,6 +13,8 @@ bool SpiffsHandler::handle(ESP8266WebServer& server, HTTPMethod method,
 {
   if(!canHandle(method, requestUri)) return false;
 
+  if(!authCheck(server)) return true;
+  
   if(!m_mounted){
     server.send(404, "text/plain", "SPIFFS not formated");
     return true;

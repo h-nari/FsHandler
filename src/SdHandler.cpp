@@ -14,6 +14,8 @@ bool SdHandler::handle(ESP8266WebServer& server, HTTPMethod requestMethod,
 {
   if(!canHandle(requestMethod, requestUri)) return false;
 
+  if(!authCheck(server)) return true;
+  
   if(!m_enabled){
     server.send(404,"text/plain", "SD card not found");
     return true;
@@ -105,13 +107,11 @@ void SdHandler::upload(ESP8266WebServer &server, String uri,
     if(now - tUpdated > 1000){
       tUpdated = now;
       uint32_t t = upload.totalSize;
-      Serial.printf("upload: write %dbyte %lusec %luKyte/sec\n",t
-		    ,(now - tStart)/1000, 1000000 * t / (now - tStart));
+      Serial.printf("upload: write %dbyte %lumsec\n",t,(now - tStart)/1000);
     }
   } else if(upload.status == UPLOAD_FILE_END){
     if(f) f.close();
     uint32_t t = upload.totalSize;
-    Serial.printf("Upload: END, Size: %ubyte %lumsec, %lubyte/sec\n",
-		  t, (now - tStart)/1000, 1000000 * t/(now - tStart));
+    Serial.printf("Upload: END, Size: %ubyte %lumsec\n",t,(now - tStart)/1000);
   }
 }
