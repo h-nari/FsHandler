@@ -24,10 +24,10 @@ bool SdHandler::handle(ESP8266WebServer& server, HTTPMethod requestMethod,
   String path(m_path);
   String spath = requestUri.substring(m_baseUriLength+1);
 
-  if(path.endsWith("/")){
-    while(spath.startsWith("/"))
-      spath = spath.substring(1);
-  }
+  while(spath.startsWith("/"))
+    spath = spath.substring(1);
+  if(!path.endsWith("/"))
+    path += "/";
   path += spath;
 
   if(requestMethod == HTTP_DELETE){
@@ -35,7 +35,7 @@ bool SdHandler::handle(ESP8266WebServer& server, HTTPMethod requestMethod,
       server.send(200, "text/plain", "delete succeeded");
       return true;
     } else {
-      server.send(404,"text/plain", "delete failed");
+      server.send(500,"text/plain", "delete failed");
       return true;
     }
     int i = path.lastIndexOf('/');
@@ -46,7 +46,10 @@ bool SdHandler::handle(ESP8266WebServer& server, HTTPMethod requestMethod,
   }
 
   File f = SD.open(path);
-  if(!f) return false;
+  if(!f) {
+    server.send(404,"text/plain","not found");
+    return true;
+  }
   if(!f.isDirectory()) {
     String contentType = getContentType(path);
     server.streamFile(f, contentType);
@@ -93,8 +96,9 @@ void SdHandler::upload(ESP8266WebServer &server, String uri,
       return;
     String path = m_path;
     path += uri.substring(m_baseUriLength);
+    if(!path.endsWith("/"))
+      path += "/";
     path += upload.filename;
-    
     Serial.printf("upload: start uri:%s m_uri:%s uriLen:%u m_path:%s path:%s\n",
 		  uri.c_str(),m_uri.c_str(), m_baseUriLength,
 		  m_path.c_str(), path.c_str());
