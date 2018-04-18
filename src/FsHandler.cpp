@@ -186,9 +186,11 @@ void FsHandler::setAuth(const char *user, const char *pwd)
 
 bool FsHandler::authCheck(ESP8266WebServer& server)
 {
-  if(!server.authenticate(m_sAuthUser.c_str(), m_sAuthPasswd.c_str())){
-    server.requestAuthentication();
-    return false;
+  if(m_bAuth){
+    if(!server.authenticate(m_sAuthUser.c_str(), m_sAuthPasswd.c_str())){
+      server.requestAuthentication();
+      return false;
+    }
   }
   return true;
 }
