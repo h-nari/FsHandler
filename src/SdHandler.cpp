@@ -103,7 +103,7 @@ void SdHandler::upload(ESP8266WebServer &server, String uri,
 		  uri.c_str(),m_uri.c_str(), m_baseUriLength,
 		  m_path.c_str(), path.c_str());
     
-    f = SD.open(path, FILE_WRITE | O_TRUNC);
+    f = SD.open(path, FILE_WRITE);
     if(!f) Serial.printf("open %s failed.\n", path.c_str());
     tStart = tUpdated = now;
   } else if(upload.status == UPLOAD_FILE_WRITE){
